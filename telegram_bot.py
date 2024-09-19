@@ -106,11 +106,24 @@ async def button_callback(update: Update, context: CallbackContext) -> None:
 
         # Send the summary data to Make.com via webhook
         # Replace 'YOUR_MAKE_WEBHOOK_URL' with your actual Make.com webhook URL
-        make_url = 'https://hook.us2.make.com/a8x90abvt3nijoi7gydmplwwt273ex8h'
+        make_url = 'https://hook.integromat.com/YOUR_MAKE_WEBHOOK_URL'
         response = requests.post(make_url, json=summary_data)
 
-        # Notify the user
-        await query.edit_message_text(text="The receipt will be ready and sent.")
+        # Prepare the summary text with confirmation
+        summary = (
+            f"**Booking Summary**\n"
+            f"**Client Name**: {context.user_data['client_name']}\n"
+            f"**Contact**: {context.user_data['contact']}\n"
+            f"**Session Type**: {context.user_data['session_type']}\n"
+            f"**Date**: {context.user_data['date']}\n"
+            f"**Time**: {context.user_data['time']}\n"
+            f"**Number of People**: {context.user_data['people']}\n"
+            f"**Total Price**: ${context.user_data['total_price']:.2f}\n"
+            f"\nThe receipt will be ready and sent."
+        )
+
+        # Edit the original message to include the confirmation
+        await query.edit_message_text(text=summary, parse_mode='Markdown')
 
 # Cancel the order
 async def cancel(update: Update, context: CallbackContext) -> int:
