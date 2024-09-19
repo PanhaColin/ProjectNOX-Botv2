@@ -64,18 +64,18 @@ async def total_price(update: Update, context: CallbackContext) -> int:
             raise ValueError
         context.user_data['total_price'] = price
         
-        # Summary of the order
+        # Summary of the order with bold formatting
         summary = (
-            f"Booking Summary\n"
-            f"Client Name: {context.user_data['client_name']}\n"
-            f"Contact: {context.user_data['contact']}\n"
-            f"Session Type: {context.user_data['session_type']}\n"
-            f"Date: {context.user_data['date']}\n"
-            f"Time: {context.user_data['time']}\n"
-            f"Number of People: {context.user_data['people']}\n"
-            f"Total Price: {context.user_data['total_price']}\n"
+            f"**Booking Summary**\n"
+            f"**Client Name**: {context.user_data['client_name']}\n"
+            f"**Contact**: {context.user_data['contact']}\n"
+            f"**Session Type**: {context.user_data['session_type']}\n"
+            f"**Date**: {context.user_data['date']}\n"
+            f"**Time**: {context.user_data['time']}\n"
+            f"**Number of People**: {context.user_data['people']}\n"
+            f"**Total Price**: {context.user_data['total_price']}\n"
         )
-        await update.message.reply_text(summary)
+        await update.message.reply_text(summary, parse_mode='Markdown')
         return ConversationHandler.END
     except ValueError:
         await update.message.reply_text("Please enter a valid price.")
