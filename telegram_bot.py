@@ -12,7 +12,7 @@ load_dotenv()
 TOKEN = os.getenv('TOKEN')
 
 # Conversation states
-CLIENT_NAME, CONTACT, SESSION_TYPE, DATE, TIME, PEOPLE, TOTAL_PRICE = range(7)
+CLIENT_NAME, CONTACT, SESSION_TYPE, DATE, TIME, PEOPLE, BOOKED_BY, TOTAL_PRICE = range(8)
 
 # Start command
 async def start(update: Update, context: CallbackContext) -> int:
@@ -51,11 +51,16 @@ async def people(update: Update, context: CallbackContext) -> int:
         if people <= 0:
             raise ValueError
         context.user_data['people'] = people
-        await update.message.reply_text("Finally, what's the total price for the session?")
-        return TOTAL_PRICE
+        await update.message.reply_text("Who booked this session?")
+        return BOOKED_BY
     except ValueError:
         await update.message.reply_text("Please enter a valid number of people.")
         return PEOPLE
+
+async def booked_by(update: Update, context: CallbackContext) -> int:
+    context.user_data['booked_by'] = update.message.text
+    await update.message.reply_text("Finally, what's the total price for the session?")
+    return TOTAL_PRICE
 
 async def total_price(update: Update, context: CallbackContext) -> int:
     try:
@@ -73,6 +78,7 @@ async def total_price(update: Update, context: CallbackContext) -> int:
             f"**Date**: {context.user_data['date']}\n"
             f"**Time**: {context.user_data['time']}\n"
             f"**Number of People**: {context.user_data['people']}\n"
+            f"**Booked By**: {context.user_data['booked_by']}\n"
             f"**Total Price**: ${context.user_data['total_price']:.2f}\n"
         )
 
@@ -101,6 +107,7 @@ async def button_callback(update: Update, context: CallbackContext) -> None:
             "date": context.user_data['date'],
             "time": context.user_data['time'],
             "people": context.user_data['people'],
+            "booked_by": context.user_data['booked_by'],
             "total_price": context.user_data['total_price']
         }
 
@@ -143,6 +150,7 @@ def main():
             DATE: [MessageHandler(filters.TEXT & ~filters.COMMAND, date)],
             TIME: [MessageHandler(filters.TEXT & ~filters.COMMAND, time)],
             PEOPLE: [MessageHandler(filters.TEXT & ~filters.COMMAND, people)],
+            BOOKED_BY: [MessageHandler(filters.TEXT & ~filters.COMMAND, booked_by)],
             TOTAL_PRICE: [MessageHandler(filters.TEXT & ~filters.COMMAND, total_price)]
         },
         fallbacks=[CommandHandler('cancel', cancel), CommandHandler('restart', restart)]
