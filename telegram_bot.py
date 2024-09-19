@@ -125,8 +125,10 @@ async def button_callback(update: Update, context: CallbackContext) -> None:
         make_url = 'https://hook.us2.make.com/a8x90abvt3nijoi7gydmplwwt273ex8h'
         response = requests.post(make_url, json=summary_data)
 
-        # Prepare the confirmation message
-        confirmation_message = "The receipt will be ready and sent."
+        # Prepare the confirmation message with a link to a private channel
+        confirmation_message = (
+            "The receipt will be ready and sent to [@yourchannel](tg://resolve?domain=yourchannel)."
+        )
 
         # Edit the original message to include the confirmation
         await query.edit_message_text(text=f"{confirmation_message}\n\n{query.message.text}", parse_mode='Markdown', reply_markup=query.message.reply_markup)
