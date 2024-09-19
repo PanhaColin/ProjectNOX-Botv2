@@ -7,7 +7,7 @@ class Config(object):
     OWNER_USERNAME = "Cxncer"
 
     # RECOMMENDED
-    SQLALCHEMY_DATABASE_URI = 'postgres://noxbot:abc1234@128.199.148.109:5432/noxdb'  # needed for any database modules
+    SQLALCHEMY_DATABASE_URI = 'postgres://noxbot:12345@157.230.41.105:5432/noxbotdb'  # needed for any database modules
     MESSAGE_DUMP = None  # needed to make sure 'save from' messages persist
     LOAD = []
     NO_LOAD = ['translation', 'rss']
