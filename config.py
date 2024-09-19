@@ -4,7 +4,7 @@ class Config(object):
     # REQUIRED
     API_KEY = "7002648174:AAHM_HSdXy-s2Kane_QvaikdtBRNqmF6kLw"
     OWNER_ID = "677568643" # If you dont know, run the bot and do /id in your private chat with it
-    OWNER_USERNAME = "Noxbot"
+    OWNER_USERNAME = "Cxncer"
 
     # RECOMMENDED
     SQLALCHEMY_DATABASE_URI = 'postgres://noxbot:abc1234@128.199.148.109:5432/noxdb'  # needed for any database modules

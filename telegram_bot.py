@@ -15,14 +15,14 @@ CLIENT_NAME, CONTACT, SESSION_TYPE, DATE, TIME, PEOPLE, TOTAL_PRICE = range(7)
 # Start command
 async def start(update: Update, context: CallbackContext) -> int:
     await update.message.reply_text(
-        "Welcome! Let's start your order. What is your name?"
+        "Tos Book! What is the client name?"
     )
     return CLIENT_NAME
 
 # Handlers for each step
 async def client_name(update: Update, context: CallbackContext) -> int:
     context.user_data['client_name'] = update.message.text
-    await update.message.reply_text("Got it! What's your contact information?")
+    await update.message.reply_text("Got it! What is the contact?")
     return CONTACT
 
 async def contact(update: Update, context: CallbackContext) -> int:
@@ -66,7 +66,7 @@ async def total_price(update: Update, context: CallbackContext) -> int:
         
         # Summary of the order
         summary = (
-            f"Order Summary:\n"
+            f"Booking Summary\n"
             f"Client Name: {context.user_data['client_name']}\n"
             f"Contact: {context.user_data['contact']}\n"
             f"Session Type: {context.user_data['session_type']}\n"
@@ -83,17 +83,17 @@ async def total_price(update: Update, context: CallbackContext) -> int:
 
 # Cancel the order
 async def cancel(update: Update, context: CallbackContext) -> int:
-    await update.message.reply_text("Order has been canceled. You can start a new one anytime with /start.")
+    await update.message.reply_text("Booking has been canceled. You can start a new one anytime with /start.")
     return ConversationHandler.END
 
 # Restart the order
 async def restart(update: Update, context: CallbackContext) -> int:
-    await update.message.reply_text("Let's restart your order. What is your name?")
+    await update.message.reply_text("Let's restart your order. What is the client name?")
     return CLIENT_NAME
 
 # Fallback handler for unrecognized input
 async def fallback(update: Update, context: CallbackContext) -> int:
-    await update.message.reply_text("I didn't understand that. Use /start to begin or /cancel to stop.")
+    await update.message.reply_text("Nhe nhai mes! Use /start to begin or /cancel to stop.")
     return ConversationHandler.END
 
 def main():
