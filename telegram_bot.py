@@ -105,25 +105,14 @@ async def button_callback(update: Update, context: CallbackContext) -> None:
         }
 
         # Send the summary data to Make.com via webhook
-        # Replace 'YOUR_MAKE_WEBHOOK_URL' with your actual Make.com webhook URL
-        make_url = 'https://hook.us2.make.com/a8x90abvt3nijoi7gydmplwwt273ex8hL'
+        make_url = 'https://hook.us2.make.com/a8x90abvt3nijoi7gydmplwwt273ex8h'
         response = requests.post(make_url, json=summary_data)
 
-        # Prepare the summary text with confirmation
-        summary = (
-            f"**Booking Summary**\n"
-            f"**Client Name**: {context.user_data['client_name']}\n"
-            f"**Contact**: {context.user_data['contact']}\n"
-            f"**Session Type**: {context.user_data['session_type']}\n"
-            f"**Date**: {context.user_data['date']}\n"
-            f"**Time**: {context.user_data['time']}\n"
-            f"**Number of People**: {context.user_data['people']}\n"
-            f"**Total Price**: ${context.user_data['total_price']:.2f}\n"
-            f"\nThe receipt will be ready and sent."
-        )
+        # Prepare the confirmation message
+        confirmation_message = "The receipt will be ready and sent."
 
         # Edit the original message to include the confirmation
-        await query.edit_message_text(text=summary, parse_mode='Markdown')
+        await query.edit_message_text(text=f"{confirmation_message}\n\n{query.message.text}", parse_mode='Markdown', reply_markup=query.message.reply_markup)
 
 # Cancel the order
 async def cancel(update: Update, context: CallbackContext) -> int:
@@ -159,7 +148,7 @@ def main():
         fallbacks=[CommandHandler('cancel', cancel), CommandHandler('restart', restart)]
     )
 
-    # Add handlers for the conversation and the button callback
+    # Add handlers
     application.add_handler(conv_handler)
     application.add_handler(CallbackQueryHandler(button_callback))
 
