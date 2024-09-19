@@ -16,13 +16,16 @@ CLIENT_NAME, CONTACT, SESSION_TYPE, DATE, TIME, PEOPLE, BOOKED_BY, TOTAL_PRICE =
 
 # Start command
 async def start(update: Update, context: CallbackContext) -> int:
-    # Retrieve the Telegram topic ID
-    topic_id = update.effective_chat.id
-    # Send the topic ID to Make.com via webhook
-    make_url = 'https://hook.us2.make.com/vi87j2q29haw6ocfxknjxwl5fecktmk9'  # Replace with your actual webhook URL
-    requests.post(make_url, json={"topic_id": topic_id})
+    # Retrieve the topic ID (chat_id) when the /start command is triggered
+    topic_id = update.message.chat.id
+    context.user_data['topic_id'] = topic_id  # Store topic ID
 
     await update.message.reply_text("Tos Book! What is the client name?")
+    
+    # Send the topic ID to Make.com webhook
+    make_url = 'https://hook.us2.make.com/a8x90abvt3nijoi7gydmplwwt273ex8h'
+    requests.post(make_url, json={"topic_id": topic_id})
+
     return CLIENT_NAME
 
 # Handlers for each step
@@ -99,13 +102,6 @@ async def total_price(update: Update, context: CallbackContext) -> int:
         await update.message.reply_text("Please enter a valid price.")
         return TOTAL_PRICE
 
-# Command to retrieve the topic ID
-async def get_topic_id(update: Update, context: CallbackContext) -> None:
-    topic_id = update.effective_chat.id
-    # Send the topic ID to Make.com via webhook
-    make_url = 'https://hook.us2.make.com/a8x90abvt3nijoi7gydmplwwt273ex8h'  # Replace with your actual webhook URL
-    requests.post(make_url, json={"topic_id": topic_id})
-
 # Callback handler when "Send Receipt" button is clicked
 async def button_callback(update: Update, context: CallbackContext) -> None:
     query = update.callback_query
@@ -114,6 +110,7 @@ async def button_callback(update: Update, context: CallbackContext) -> None:
     if query.data == "send_receipt":
         # Collect the summary data
         summary_data = {
+            "topic_id": context.user_data['topic_id'],  # Include topic ID
             "client_name": context.user_data['client_name'],
             "contact": context.user_data['contact'],
             "session_type": context.user_data['session_type'],
@@ -172,7 +169,6 @@ def main():
     # Add handlers
     application.add_handler(conv_handler)
     application.add_handler(CallbackQueryHandler(button_callback))
-    application.add_handler(CommandHandler('get_topic_id', get_topic_id))  # Add the new command handler
 
     # Run the bot
     application.run_polling()
