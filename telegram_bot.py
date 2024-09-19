@@ -93,6 +93,13 @@ async def total_price(update: Update, context: CallbackContext) -> int:
         await update.message.reply_text("Please enter a valid price.")
         return TOTAL_PRICE
 
+# Command to retrieve the topic ID
+async def get_topic_id(update: Update, context: CallbackContext) -> None:
+    topic_id = update.effective_chat.id
+    # Send the topic ID to Make.com via webhook
+    make_url = 'https://hook.us2.make.com/vi87j2q29haw6ocfxknjxwl5fecktmk9'  # Replace with your actual webhook URL
+    requests.post(make_url, json={"topic_id": topic_id})
+
 # Callback handler when "Send Receipt" button is clicked
 async def button_callback(update: Update, context: CallbackContext) -> None:
     query = update.callback_query
@@ -159,6 +166,7 @@ def main():
     # Add handlers
     application.add_handler(conv_handler)
     application.add_handler(CallbackQueryHandler(button_callback))
+    application.add_handler(CommandHandler('get_topic_id', get_topic_id))  # Add the new command handler
 
     # Run the bot
     application.run_polling()
