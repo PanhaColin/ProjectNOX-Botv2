@@ -106,7 +106,7 @@ async def button_callback(update: Update, context: CallbackContext) -> None:
 
         # Send the summary data to Make.com via webhook
         # Replace 'YOUR_MAKE_WEBHOOK_URL' with your actual Make.com webhook URL
-        make_url = 'https://hook.integromat.com/YOUR_MAKE_WEBHOOK_URL'
+        make_url = 'https://hook.us2.make.com/a8x90abvt3nijoi7gydmplwwt273ex8hL'
         response = requests.post(make_url, json=summary_data)
 
         # Prepare the summary text with confirmation
