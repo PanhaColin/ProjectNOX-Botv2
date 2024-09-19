@@ -1,8 +1,10 @@
 import os
-from telegram import Update, ReplyKeyboardMarkup
-from telegram.ext import Application, CommandHandler, MessageHandler, ConversationHandler, filters
-from telegram.ext import CallbackContext
+import requests
 from dotenv import load_dotenv
+from telegram import Update, InlineKeyboardButton, InlineKeyboardMarkup
+from telegram.ext import (
+    Application, CommandHandler, MessageHandler, ConversationHandler, filters, CallbackContext, CallbackQueryHandler
+)
 
 # Load environment variables
 load_dotenv()
@@ -14,9 +16,7 @@ CLIENT_NAME, CONTACT, SESSION_TYPE, DATE, TIME, PEOPLE, TOTAL_PRICE = range(7)
 
 # Start command
 async def start(update: Update, context: CallbackContext) -> int:
-    await update.message.reply_text(
-        "Tos Book! What is the client name?"
-    )
+    await update.message.reply_text("Tos Book! What is the client name?")
     return CLIENT_NAME
 
 # Handlers for each step
@@ -75,11 +75,42 @@ async def total_price(update: Update, context: CallbackContext) -> int:
             f"**Number of People**: {context.user_data['people']}\n"
             f"**Total Price**: ${context.user_data['total_price']:.2f}\n"
         )
-        await update.message.reply_text(summary, parse_mode='Markdown')
+
+        # Inline button to send the receipt
+        keyboard = [[InlineKeyboardButton("Send Receipt", callback_data="send_receipt")]]
+        reply_markup = InlineKeyboardMarkup(keyboard)
+
+        # Send summary with the button
+        await update.message.reply_text(summary, parse_mode='Markdown', reply_markup=reply_markup)
         return ConversationHandler.END
     except ValueError:
         await update.message.reply_text("Please enter a valid price.")
         return TOTAL_PRICE
+
+# Callback handler when "Send Receipt" button is clicked
+async def button_callback(update: Update, context: CallbackContext) -> None:
+    query = update.callback_query
+    await query.answer()
+
+    if query.data == "send_receipt":
+        # Collect the summary data
+        summary_data = {
+            "client_name": context.user_data['client_name'],
+            "contact": context.user_data['contact'],
+            "session_type": context.user_data['session_type'],
+            "date": context.user_data['date'],
+            "time": context.user_data['time'],
+            "people": context.user_data['people'],
+            "total_price": context.user_data['total_price']
+        }
+
+        # Send the summary data to Make.com via webhook
+        # Replace 'YOUR_MAKE_WEBHOOK_URL' with your actual Make.com webhook URL
+        make_url = 'https://hook.us2.make.com/a8x90abvt3nijoi7gydmplwwt273ex8h'
+        response = requests.post(make_url, json=summary_data)
+
+        # Notify the user
+        await query.edit_message_text(text="The receipt will be ready and sent.")
 
 # Cancel the order
 async def cancel(update: Update, context: CallbackContext) -> int:
@@ -96,6 +127,7 @@ async def fallback(update: Update, context: CallbackContext) -> int:
     await update.message.reply_text("Nhe nhai mes! Use /start to begin or /cancel to stop.")
     return ConversationHandler.END
 
+# Main function to initialize the bot
 def main():
     application = Application.builder().token(TOKEN).build()
 
@@ -114,8 +146,9 @@ def main():
         fallbacks=[CommandHandler('cancel', cancel), CommandHandler('restart', restart)]
     )
 
-    # Add handlers
+    # Add handlers for the conversation and the button callback
     application.add_handler(conv_handler)
+    application.add_handler(CallbackQueryHandler(button_callback))
 
     # Run the bot
     application.run_polling()
