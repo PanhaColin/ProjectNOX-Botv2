@@ -16,6 +16,12 @@ CLIENT_NAME, CONTACT, SESSION_TYPE, DATE, TIME, PEOPLE, BOOKED_BY, TOTAL_PRICE =
 
 # Start command
 async def start(update: Update, context: CallbackContext) -> int:
+    # Retrieve the Telegram topic ID
+    topic_id = update.effective_chat.id
+    # Send the topic ID to Make.com via webhook
+    make_url = 'https://hook.us2.make.com/vi87j2q29haw6ocfxknjxwl5fecktmk9'  # Replace with your actual webhook URL
+    requests.post(make_url, json={"topic_id": topic_id})
+
     await update.message.reply_text("Tos Book! What is the client name?")
     return CLIENT_NAME
 
