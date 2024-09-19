@@ -64,7 +64,7 @@ async def total_price(update: Update, context: CallbackContext) -> int:
             raise ValueError
         context.user_data['total_price'] = price
         
-        # Summary of the order with bold formatting
+        # Summary of the order with bold formatting and currency for total price
         summary = (
             f"**Booking Summary**\n"
             f"**Client Name**: {context.user_data['client_name']}\n"
@@ -73,7 +73,7 @@ async def total_price(update: Update, context: CallbackContext) -> int:
             f"**Date**: {context.user_data['date']}\n"
             f"**Time**: {context.user_data['time']}\n"
             f"**Number of People**: {context.user_data['people']}\n"
-            f"**Total Price**: {context.user_data['total_price']}\n"
+            f"**Total Price**: ${context.user_data['total_price']:.2f}\n"
         )
         await update.message.reply_text(summary, parse_mode='Markdown')
         return ConversationHandler.END
