@@ -127,7 +127,7 @@ async def button_callback(update: Update, context: CallbackContext) -> None:
 
         # Prepare the confirmation message with a link to a private channel
         confirmation_message = (
-            "The receipt will be ready and sent to [@yourchannel](tg://resolve?domain=yourchannel)."
+            "The receipt will be ready and sent to [@yourchannel](tg://resolve?domain=-1002254931323)."
         )
 
         # Edit the original message to include the confirmation
